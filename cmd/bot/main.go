@@ -30,20 +30,38 @@ func main() {
 	for update := range updates {
 		if update.Message != nil { // If we got a message
 
-			if update.Message.Command() == "help" {
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "/help -- help")
-				//msg.ReplyToMessageID = update.Message.MessageID
-
-				bot.Send(msg)
-
-				continue
+			switch update.Message.Command() {
+			case "help":
+				helpCommand(bot, update.Message)
+			case "list":
+				listCommand(bot, update.Message)
+			default:
+				defaultBehaviour(bot, update.Message)
 			}
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "You wrote:"+update.Message.Text)
-			//msg.ReplyToMessageID = update.Message.MessageID
-
-			bot.Send(msg)
 		}
 	}
+}
+
+func helpCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID,
+		"/help -- help\n"+
+			"/list -- list products")
+
+	bot.Send(msg)
+}
+
+func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "TBD")
+
+	bot.Send(msg)
+}
+
+func defaultBehaviour(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
+	log.Printf("[%s] %s", inputMessage.From.UserName, inputMessage.Text)
+
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "You wrote:"+inputMessage.Text)
+	//msg.ReplyToMessageID = update.Message.MessageID
+
+	bot.Send(msg)
 }
