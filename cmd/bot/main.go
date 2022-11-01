@@ -7,8 +7,6 @@ import (
 	"os"
 )
 
-//const token = "5657354588:AAEfvz9uf9GoHs6EnWTm2ESrlAb60XZugqk"
-
 func main() {
 
 	godotenv.Load()
@@ -31,6 +29,15 @@ func main() {
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
+
+			if update.Message.Command() == "help" {
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "/help -- help")
+				//msg.ReplyToMessageID = update.Message.MessageID
+
+				bot.Send(msg)
+
+				continue
+			}
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "You wrote:"+update.Message.Text)
